@@ -56,18 +56,19 @@ def create_namelist(locations, sizes):
 
 def get_DOWA_domains():
     # Pretty much hardcoded for the specific DOWA setup...................
-    domains = [dict(name='FINO1',        lat=54.01, lon=6.59, c=pl.cm.Paired( 0), a=0.9, ls='solid'),
-               dict(name='Goeree',       lat=51.93, lon=3.67, c=pl.cm.Paired( 1), a=0.9, ls='solid'),
-               dict(name='Europlatform', lat=52.00, lon=3.27, c=pl.cm.Paired( 2), a=0.9, ls='solid'),
-               dict(name='K13',          lat=53.22, lon=3.22, c=pl.cm.Paired( 3), a=0.9, ls='solid'),
-               dict(name='HKZ',          lat=52.30, lon=4.10, c=pl.cm.Paired( 4), a=0.9, ls='solid'),
-               dict(name='P11B',         lat=52.36, lon=3.34, c=pl.cm.Paired( 5), a=0.9, ls='solid'),
-               dict(name='F3-FB-1',      lat=54.85, lon=4.70, c=pl.cm.Paired( 6), a=0.9, ls='solid'),
-               dict(name='Cabauw',       lat=51.97, lon=4.90, c=pl.cm.Paired( 7), a=0.9, ls='dotted'),
-               dict(name='Loobos',       lat=52.17, lon=5.74, c=pl.cm.Paired( 8), a=0.9, ls='dotted'),
-               dict(name='Lutjewad',     lat=53.40, lon=6.35, c=pl.cm.Paired( 9), a=0.9, ls='dotted'),
-               dict(name='Schiphol',     lat=52.31, lon=4.76, c=pl.cm.Paired(10), a=0.9, ls='dotted'),
-               dict(name='Rotterdam',    lat=51.91, lon=4.47, c=pl.cm.Paired(11), a=0.9, ls='dotted')]
+    domains = [dict(name='FINO1',        lat=54.01, lon=6.59,   c=pl.cm.Paired( 0), a=0.9, ls='solid'),
+               dict(name='Goeree',       lat=51.93, lon=3.67,   c=pl.cm.Paired( 1), a=0.9, ls='solid'),
+               dict(name='Europlatform', lat=52.00, lon=3.27,   c=pl.cm.Paired( 2), a=0.9, ls='solid'),
+               dict(name='K13',          lat=53.22, lon=3.22,   c=pl.cm.Paired( 3), a=0.9, ls='solid'),
+               dict(name='HKZ',          lat=52.30, lon=4.10,   c=pl.cm.Paired( 4), a=0.9, ls='solid'),
+               dict(name='P11B',         lat=52.36, lon=3.34,   c=pl.cm.Paired( 5), a=0.9, ls='solid'),
+               dict(name='F3-FB-1',      lat=54.85, lon=4.70,   c=pl.cm.Paired( 6), a=0.9, ls='solid'),
+               dict(name='Cabauw',       lat=51.97, lon=4.90,   c=pl.cm.Paired( 7), a=0.9, ls='dotted'),
+               dict(name='Loobos',       lat=52.17, lon=5.74,   c=pl.cm.Paired( 8), a=0.9, ls='dotted'),
+               dict(name='Lutjewad',     lat=53.40, lon=6.35,   c=pl.cm.Paired( 9), a=0.9, ls='dotted'),
+               dict(name='Schiphol',     lat=52.31, lon=4.76,   c=pl.cm.Paired(10), a=0.9, ls='dotted'),
+               dict(name='Rotterdam',    lat=51.91, lon=4.47,   c=pl.cm.Paired(11), a=0.9, ls='dotted'),
+               dict(name='BES',          lat=13.28, lon=-57.76, c=pl.cm.Paired(12), a=0.9, ls='dotted')]
 
     sizes = [-1, 10000, 30000]
 

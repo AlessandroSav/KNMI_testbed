@@ -9,6 +9,7 @@ import subprocess
 import socket
 
 # Add src directory to Python path, and import DALES specific tools
+# src_dir = '/Users/alessandrosavazzi/Desktop/WORK/PhD_Year1/DALES/DALES/Les_version/KNMI_testbed_edited/src/'
 src_dir = os.path.abspath('{}/../../src/'.format(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(src_dir)
 
@@ -61,16 +62,16 @@ if __name__ == '__main__':
     # Settings
     # --------------------
 
-    expname     = 'cabauw_20160804_20160818'
+    expname     = 'cabauw_20160504_20160505'
     expnr       = 1       # DALES experiment number
-    iloc        = 7+12    # Location in DDH/NetCDF files (7+12 = 10x10km average Cabauw)
+    iloc        = 12+10    # Location in DDH/NetCDF files (7+12 = 10x10km average Cabauw)
     n_accum     = 1       # Number of time steps to accumulate in the forcings
     warmstart   = False   # Run each day/run as a warm start from previous exp
     auto_submit = False   # Directly submit the experiments (ECMWF only..)
 
     # 24 hour runs (cold or warm starts), starting at 00 UTC.
-    start  = datetime.datetime(year=2016, month=8, day=4)
-    end    = datetime.datetime(year=2016, month=8, day=5)
+    start  = datetime.datetime(year=2016, month=5, day=4)
+    end    = datetime.datetime(year=2016, month=5, day=5)
     dt_exp = datetime.timedelta(hours=24)   # Time interval between experiments
     t_exp  = datetime.timedelta(hours=24)   # Length of experiment
     eps    = datetime.timedelta(hours=1)
@@ -80,9 +81,9 @@ if __name__ == '__main__':
     #path_e5  = '/Users/bart/meteo/data/ERA5/soil/'
     #path_out = '/Users/bart/meteo/data/KNMI_testbed_runs/'
 
-    path = '/scratch/ms/nl/nkbs/LES_forcing/'
-    path_e5 = '/scratch/ms/nl/nkbs/LES_forcing/'
-    path_out = '/scratch/ms/nl/nkbs/DALES_runs/'
+    path = '/Users/alessandrosavazzi/Desktop/WORK/PhD_Year1/DALES/DALES/Cases/cabaw/HARMONIE'
+    path_e5 = '/Users/alessandrosavazzi/Desktop/WORK/PhD_Year1/DALES/DALES/Cases/cabaw/ERA5'
+    path_out = '/Users/alessandrosavazzi/Desktop/WORK/PhD_Year1/DALES/DALES/Experiments'
 
 
     # ------------------------
@@ -91,6 +92,7 @@ if __name__ == '__main__':
 
     # Create stretched vertical grid for LES
     grid = Grid_stretched(kmax=160, dz0=20, nloc1=80, nbuf1=20, dz1=150)
+    # grid = Grid_equidist_and_stretched(kmax=128, kloc0=75, dz0=80, alpha=0.04)
     #grid.plot()
 
     date = start

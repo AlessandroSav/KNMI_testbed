@@ -1,0 +1,147 @@
+&RUN
+
+iexpnr  = 001
+lwarmstart  = .false.
+runtime  = 86400.0
+trestart  = 86400.0
+ladaptive  = .true.
+irandom    =  43
+randthl    =  0.1
+randqt     =  2.5e-5
+nsv        =  2
+dtav_glob  = 60.
+timeav_glob= 600.
+nprocx     = 16
+nprocy     = 16
+/
+
+&DOMAIN
+itot       =  672
+jtot       =  672
+kmax  = 118
+
+xsize      =  100800.
+ysize      =  100800.
+
+xlat  = 13.2806
+xlon  = -57.7559
+xday  = 40
+xtime  = 0
+/
+
+&PHYSICS
+z0         =  1e-5
+ps         =  101700
+thls       =  299.2
+lmoist     =  .true.
+lcoriol    =  .true.
+ltimedep   =  .true.
+ltimedepuv =  .true.
+irad       =  -1
+iradiation =  4
+timerad    =  60
+useMcICA   = .false.
+/
+
+&NAMRADIATION
+usero3     = .false.
+ocean      = .true.
+/
+
+&NAMCLOUDFIELD
+lcloudfield=  .false.
+/
+
+&NAMMICROPHYSICS
+imicro     =  2
+l_sb       =  .false.
+l_rain     =  .true.
+l_sedc     =  .true.
+l_mur_cst  =  .false.
+mur_cst    =  0
+Nc_0       =  50e6
+sig_g      = 1.2
+/
+
+&NAMSURFACE
+isurf      =   5
+lsmoothflux= .false.
+ustin      =   0.3
+albedoav   =  0.07
+/
+
+&DYNAMICS
+llsadv     =  .false.
+lqlnr      =  .false.
+cu         = -6.
+cv         =  0.
+
+iadv_mom    =  5
+iadv_tke    = -1
+iadv_thl    = -1
+iadv_qt     = -1
+iadv_sv     = -1
+/
+
+&NAMSUBGRID
+ldelta      = .false.
+/
+
+&NAMBUDGET 
+lbudget     = .true.
+/
+
+&NAMNETCDFSTATS
+lnetcdf     = .true.
+lsync       = .true.
+/
+
+&NAMCHECKSIM
+tcheck      = 0
+/
+
+&NAMSAMPLING
+lsampcl     = .true.
+lsampco     = .true.
+lsampup     = .true.
+lsampbuup   = .true.
+lsamptend   = .true.
+/
+
+&NAMTIMESTAT
+ltimestat   = .true.
+/
+
+&NAMFIELDDUMP
+lfielddump  = .true.
+ldiracc     = .true.
+dtav        = 1800
+/
+
+&NAMSTATTEND
+ltend       = .true.
+/
+
+&NAMGENSTAT
+lstat       = .true.
+/
+
+&NAMBULKMICROSTAT
+lmicrostat  = .true.
+/
+
+&NAMCROSSSECTION
+lcross     = .true.
+dtav       = 300
+crossheight = 1,20,40
+/
+
+&NAMCAPE
+lcape      = .true.
+dtav       = 300
+/
+
+&NAMRADSTAT
+lstat        = .true.
+lradclearair = .true.
+/

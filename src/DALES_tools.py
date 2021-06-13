@@ -140,6 +140,22 @@ class Grid_linear_stretched(Grid):
         zh[1:]     = np.cumsum(self.dz)
         self.z[:]  = 0.5 * (zh[1:] + zh[:-1])
         self.zsize = zh[-1]
+        
+        
+class Grid_equidist_and_stretched(Grid):
+    def __init__(self, kmax, kloc0, dz0, alpha):
+        Grid.__init__(self, kmax, dz0)
+
+        self.zsize = kloc0 * dz0
+        self.z[0:kloc0]  = np.arange(dz0/2, self.zsize, dz0)
+        self.dz[0:kloc0] = dz0
+        
+
+        self.dz[kloc0:] = dz0 * (1 + alpha)**np.arange(kmax - kloc0)
+        zh         = np.zeros((kmax - kloc0)+1)
+        zh[:]     = np.cumsum(self.dz)[kloc0-1:]
+        self.z[kloc0:]  = 0.5 * (zh[1:] + zh[:-1])
+        self.zsize = zh[-1]
 
 # ---------------------------
 # Function to read DALES in/output
@@ -323,7 +339,7 @@ def write_forcings(file_name, timedep_sfc, timedep_atm, docstring=''):
 
     # Write surface variables
     f.write('{0:^15s} {1:^15s} {2:^15s} {3:^15s} {4:^15s} {5:^15s}\n'\
-        .format('time', 'wthl_s', 'wqt_s', 'T_s', 'qt_s', 'p_s'))
+        .format('time', 'wthl_s', 'wqt_s', 'th_s', 'qt_s', 'p_s'))
     f.write('{0:^15s} {1:^15s} {2:^15s} {3:^15s} {4:^15s} {5:^15s}\n'\
         .format('(s)', '(K m s-1)', '(kg kg-1 m s-1)', '(K)', '(kg kg-1)', '(Pa)'))
 
@@ -336,13 +352,13 @@ def write_forcings(file_name, timedep_sfc, timedep_atm, docstring=''):
         time  = _get_or_default(timedep_sfc, 'time',  nt, 0)
         wthls = _get_or_default(timedep_sfc, 'wthl_s',nt, 0)
         wqts  = _get_or_default(timedep_sfc, 'wqt_s', nt, 0)
-        Ts    = _get_or_default(timedep_sfc, 'T_s',   nt, 0)
+        ths   = _get_or_default(timedep_sfc, 'th_s',   nt, 0)
         qts   = _get_or_default(timedep_sfc, 'qt_s',  nt, 0)
         ps    = _get_or_default(timedep_sfc, 'p_s',   nt, 0)
 
         for t in range(nt):
             f.write('{0:+1.8E} {1:+1.8E} {2:+1.8E} {3:+1.8E} {4:+1.8E} {5:+1.8E}\n'\
-                .format(time[t], wthls[t], wqts[t], Ts[t], qts[t], ps[t]))
+                .format(time[t], wthls[t], wqts[t], ths[t], qts[t], ps[t]))
 
     if timedep_atm is not None:
         time = timedep_atm['time']
@@ -387,6 +403,7 @@ def get_file_list(path, starttime, endtime):
     Get list of required DDH NetCDF files to force
     LES from `starttime` to `endtime`
     """
+    t_cycle =24. #hours (how often do you have HAMRONIE outputs)
 
     # For now limited to runs starting at a complete hour, to prevent having
     # to interpolate the inital conditions
@@ -394,17 +411,17 @@ def get_file_list(path, starttime, endtime):
         raise RuntimeError('Can only create forcings starting at a complete hour!')
 
     # If experiment starts at start of cycle (t=0,3,6,..) we also need the previous cycle..
-    if starttime.hour % 3 == 0:
-        starttime -= datetime.timedelta(hours=3)
+    # if starttime.hour % t_cycle == 0:
+    #     starttime -= datetime.timedelta(hours=t_cycle)
 
     # Number of cycles to convert
-    n_cycles = int((endtime-starttime).total_seconds() / 3600. / 3.) + 1
+    n_cycles = int((endtime-starttime).total_seconds() / 3600. / t_cycle) + 1
 
     # Create list of cycles to convert
     files   = []
     success = True
     for t in range(n_cycles):
-        date    = starttime + t * datetime.timedelta(hours=3)
+        date    = starttime + t * datetime.timedelta(hours=t_cycle)
 
         #in_file = '{0:}/{1:04d}/{2:02d}/{3:02d}/{4:02d}/LES_forcing_{1:04d}{2:02d}{3:02d}{4:02d}.nc'.\
         #    format(path, date.year, date.month, date.day, date.hour)
@@ -521,6 +538,11 @@ def create_ls_forcings(nc_data, grid, t0, t1, iloc, docstring, n_accumulate=1, e
         dtu_dyn   = nc_data['dtu_dyn' ][t0:t1, iloc, :].values
         dtv_dyn   = nc_data['dtv_dyn' ][t0:t1, iloc, :].values
         dtq_dyn   = nc_data['dtqv_dyn'][t0:t1, iloc, :].values
+        
+        dtu_dyn.flags.writeable = True
+        dtv_dyn.flags.writeable = True
+        dtq_dyn.flags.writeable = True
+        
 
     # Time in seconds since start of run
     time_sec = (nc_data.time[t0:t1  ] - nc_data.time[t0]).values / 1e9
@@ -566,11 +588,12 @@ def create_ls_forcings(nc_data, grid, t0, t1, iloc, docstring, n_accumulate=1, e
     Ts = nc_data['T_s'][t0:t1:n_accumulate, iloc].values
     qs = nc_data['q_s'][t0:t1:n_accumulate, iloc].values
     zero_s = np.zeros_like(Ts)
+    ths = nc_data['th_s'][t0:t1:n_accumulate, iloc].values
 
     # Write to ls_flux.inp.expnr
     output_sfc = odict([('time',   time_sec_sfc),
                         ('p_s',    ps          ),
-                        ('T_s',    Ts          ),
+                        ('th_s',   ths          ),
                         ('qt_s',   qs          )])
 
     output_ls  = odict([('time',   time_sec_ls),
@@ -671,17 +694,19 @@ if __name__ == '__main__':
         """
         Demo of the different vertical grids
         """
-        ktot = 192
+        ktot = 118
         dz0  = 20
 
         equidist  = Grid_equidist(ktot, dz0)
-        linear    = Grid_linear_stretched(ktot, dz0, 0.01)
+        linear    = Grid_linear_stretched(ktot, dz0, 0.012)
         stretched = Grid_stretched(ktot, dz0, 110, 30, 150)
+        mixed     = Grid_equidist_and_stretched(ktot,30,dz0,0.01)
 
         pl.figure()
         pl.plot(equidist.dz, equidist.z, '-x', label='equidistant')
         pl.plot(linear.dz, linear.z, '-x', label='linear')
         pl.plot(stretched.dz, stretched.z, '-x', label='stretched')
+        pl.plot(mixed.dz, mixed.z, '-x', label='mixed')
         pl.legend()
         pl.xlabel('dz (m)')
         pl.ylabel('z (m)')
