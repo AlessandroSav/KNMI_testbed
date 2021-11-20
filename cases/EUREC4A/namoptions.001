@@ -2,8 +2,8 @@
 
 iexpnr  = 001
 lwarmstart  = .false.
-runtime  = 86400.0
-trestart  = 86400.0
+runtime  = 864000.0
+trestart  = 864000.0
 ladaptive  = .true.
 irandom    =  43
 randthl    =  0.1
@@ -18,14 +18,14 @@ nprocy     = 16
 &DOMAIN
 itot       =  672
 jtot       =  672
-kmax  = 118
+kmax  = 150
 
 xsize      =  100800.
 ysize      =  100800.
 
 xlat  = 13.2806
 xlon  = -57.7559
-xday  = 40
+xday  = 33
 xtime  = 0
 /
 

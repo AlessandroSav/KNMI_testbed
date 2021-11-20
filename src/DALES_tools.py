@@ -493,7 +493,7 @@ def create_initial_profiles(nc_data, grid, t0, t1, iloc, docstring, expnr=1):
     write_profiles('scalar.inp.{0:03d}'.format(expnr), output, grid.kmax, docstring)
 
 
-def create_ls_forcings(nc_data, grid, t0, t1, iloc, docstring, n_accumulate=1, expnr=1, harmonie_rad=False):
+def create_ls_forcings(nc_data, grid, t0, t1, iloc, docstring, n_accumulate=1, expnr=1, harmonie_rad=0, const_rad=np.nan):
     """
     Create all the (partially time dependent) large scale forcings
     """
@@ -578,9 +578,23 @@ def create_ls_forcings(nc_data, grid, t0, t1, iloc, docstring, n_accumulate=1, e
     dtq_dyn   = interp_z_time(z, grid.z, dtq_dyn  )
     zero_a    = np.zeros_like(dtthl_dyn)
 
-    if (harmonie_rad):
+    if (harmonie_rad==0):    
+        pass
+    elif (harmonie_rad==1):
         print('Adding radiative tendency from Harmonie..')
+        print('rad tend: ', max(abs(dtthl_rad)))
         dtthl_dyn += dtthl_rad
+        
+    elif (harmonie_rad==2):
+            # add constant radiation tendency (use when iradiation is off)
+            if np.isnan(const_rad): 
+                print('const_rad not defined')
+                exit
+            dtthl_dyn += const_rad # K/s
+    else: 
+        print('harmonie_rad not a valid option')
+        exit
+            
 
     # Surface forcings
     time_sec_sfc = time_sec[::n_accumulate]
