@@ -2,8 +2,8 @@
 
 iexpnr  = 001
 lwarmstart  = .false.
-runtime  = 864000.0
-trestart  = 864000.0
+runtime  = 172800.0
+trestart  = 172800.0
 ladaptive  = .true.
 irandom    =  43
 randthl    =  0.1
@@ -25,7 +25,7 @@ ysize      =  100800.
 
 xlat  = 13.2806
 xlon  = -57.7559
-xday  = 33
+xday  = 40
 xtime  = 0
 /
 

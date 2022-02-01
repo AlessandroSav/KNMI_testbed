@@ -100,9 +100,9 @@ if __name__ == '__main__':
     auto_submit = False   # Directly submit the experiments (ECMWF only..)
 
     # 24 hour runs (cold or warm starts), starting at 00 UTC.
-    start  = datetime.datetime(year=2020, month=2, day=2)
-    end    = datetime.datetime(year=2020, month=2, day=12)
-    dt_exp = datetime.timedelta(hours=24*9)   # Time interval between experiments
+    start  = datetime.datetime(year=2020, month=2, day=9)
+    end    = datetime.datetime(year=2020, month=2, day=11)
+    dt_exp = datetime.timedelta(hours=24*11)   # Time interval between experiments
     # t_exp  = datetime.timedelta(hours=24)   # Length of experiment
     t_exp  = end - start                      # Length of experiment
     eps    = datetime.timedelta(hours=1)
@@ -179,6 +179,7 @@ if __name__ == '__main__':
                 nc_data['dtqv_dyn'] = nc_data['dtq_dyn']
         if 'q_s'not in (list(nc_data.keys())): # !!! 
                 nc_data['q_s'] = calc_q_sat(nc_data.T_s,nc_data.p_s)
+
         if 'th_s' not in (list(nc_data.keys())): # !!! 
                 nc_data['th_s'] = nc_data['T_s']/\
                     (nc_data['p_s'] / constants['p0'])**\
@@ -190,8 +191,11 @@ if __name__ == '__main__':
         ## The script does not need surface latent or sensible heat flux!      
         ################################################################## 
         
+        ### interpolate values if there is a gap 
+        for ii in ['dtT_dyn','dtq_dyn','dtu_dyn','dtv_dyn']:
+            nc_data[ii] = nc_data[ii].where(nc_data[ii].any('level'),drop=True).interp(time=nc_data.time)
+        nc_data = nc_data.fillna(0)
         
-            
         # Get indices of start/end date/time in `nc_data`
         t0, t1 = get_start_end_indices(date, date + t_exp + eps, nc_data.time.values)
 
